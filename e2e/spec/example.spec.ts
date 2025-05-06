@@ -1,12 +1,16 @@
-const { Builder, Browser, By, Key, until } = require('selenium-webdriver')
+import { Builder, By, until } from 'selenium-webdriver';
 
-;(async function example() {
-  let driver = await new Builder().forBrowser(Browser.FIREFOX).build()
+(async () => {
+  const driver = await new Builder().forBrowser('chrome').build();
+
   try {
-    await driver.get('https://www.google.com/ncr')
-    await driver.findElement(By.name('q')).sendKeys('webdriver', Key.RETURN)
-    await driver.wait(until.titleIs('webdriver - Google Search'), 1000)
+    await driver.get('https://www.google.com');
+    const searchBox = await driver.findElement(By.name('q'));
+    await searchBox.sendKeys('OpenAI');
+    await searchBox.submit();
+    await driver.wait(until.titleContains('OpenAI'), 5000);
+    console.log('Page title is:', await driver.getTitle());
   } finally {
-    await driver.quit()
+    await driver.quit();
   }
-})()
+})();
