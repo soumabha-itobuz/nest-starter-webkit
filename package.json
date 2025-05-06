@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "chromedriver": "^136.0.0",
+    "selenium-webdriver": "^4.32.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}
