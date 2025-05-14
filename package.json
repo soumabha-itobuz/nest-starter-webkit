@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "chromedriver": "^136.0.0",
+    "jest": "^29.7.0",
+    "selenium-webdriver": "^4.32.0"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest-html-reporter": "^4.1.0"
+  },
+  
+  "jest": {
+  "testTimeout": 20000,
+  "reporters": [
+    "default",
+    ["jest-html-reporter", {
+      "pageTitle": "Selenium Jest Test Report",
+      "outputPath": "test-report.html"
+    }]
+  ]
+}
+
+}
