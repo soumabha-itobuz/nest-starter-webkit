@@ -1,0 +1,4 @@
+Language: TypeScript
+Test Framework: Jest
+Automation: Selenium WebDriver
+Tooling: ts-jest, chromedriver
