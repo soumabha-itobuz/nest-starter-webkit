@@ -1,9 +1,9 @@
 {
   "dependencies": {
-    "chromedriver": "^136.0.0",
-    "selenium-webdriver": "^4.32.0"
+    "selenium-webdriver": "^4.32.0",
+    "mocha": "11.2.2"
   },
-  "devDependencies": {
-    "typescript": "^5.8.3"
+  "scripts": {
+    "test": "mocha --timeout 10000"
   }
 }
