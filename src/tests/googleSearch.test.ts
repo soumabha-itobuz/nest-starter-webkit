@@ -1,3 +1,6 @@
+import { config } from 'dotenv';
+config();
+
 // src/__tests__/googleSearch.test.ts
 import { Builder, By, Key, until, WebDriver } from 'selenium-webdriver';
 
@@ -10,8 +13,12 @@ describe('Google Search (TS + Jest)', () => {
 
 
   test('should search for Selenium WebDriver', async () => {
-    await driver.get('https://www.google.com');
-
+    const baseUrl = process.env.GOOGLE_URL;
+    if (!baseUrl) {
+      throw new Error('GOOGLE_URL is not defined in the environment variables.');
+    }
+    console.log('Base URL:', baseUrl);
+    await driver.get(baseUrl);
     
   });
 });

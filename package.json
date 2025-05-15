@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "chromedriver": "^136.0.0",
+    "dotenv": "^16.5.0",
     "selenium-webdriver": "^4.32.0"
   },
   "devDependencies": {
@@ -14,6 +15,7 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "tsc"
+    "build": "tsc",
+    "test:ci": "xvfb-run --auto-servernum npm test"
   }
 }

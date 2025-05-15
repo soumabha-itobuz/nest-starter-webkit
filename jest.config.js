@@ -9,8 +9,9 @@ module.exports = {
   reporters: [
     "default",
     ["jest-html-reporter", {
-      "pageTitle": "Test Report",
-      "outputPath": "test-report.html"
+      "pageTitleReport": "Test Report",
+      "outputPath": "test-report.html",
+      "pageTitle": "Scheduled Selenium Test Report"
     }]
   ]
 };
