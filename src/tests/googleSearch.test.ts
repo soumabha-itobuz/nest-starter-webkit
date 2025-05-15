@@ -11,6 +11,9 @@ describe('Google Search (TS + Jest)', () => {
     driver = await new Builder().forBrowser('chrome').build();
   });
 
+  afterAll(async () => {
+    await driver.quit();
+  });
 
   test('should search for Selenium WebDriver', async () => {
     const baseUrl = process.env.GOOGLE_URL;
