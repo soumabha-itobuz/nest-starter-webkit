@@ -14,6 +14,7 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "tsc"
+    "build": "tsc",
+    "test:ci": "xvfb-run --auto-servernum npm test"
   }
 }
