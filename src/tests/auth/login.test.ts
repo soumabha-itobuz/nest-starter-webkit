@@ -1,6 +1,7 @@
 import { Builder, By, until, WebDriver } from 'selenium-webdriver';
 import fs from 'fs';
 import path from 'path';
+import { login } from '../../lib/login.util';
 
 describe('Login Page', () => {
   let driver: WebDriver;
@@ -27,12 +28,7 @@ describe('Login Page', () => {
   });
 
   it('should log in with last signup credentials', async () => {
-    await driver.get('https://sass-starter-kit.wordpress-studio.io/login');
-    await driver.sleep(3000);
-    await driver.findElement(By.name('email')).sendKeys(testEmail);
-    await driver.findElement(By.name('password')).sendKeys(testPassword);
-    await driver.findElement(By.css('button[type="submit"]')).click();
-    await driver.sleep(3000);
+    await login(driver, testEmail, testPassword);
 
     // Check for either "Create Workspace" (new user) or dashboard/home (existing user)
     let isNewUser = false;
