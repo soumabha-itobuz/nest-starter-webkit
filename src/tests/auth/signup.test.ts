@@ -1,5 +1,7 @@
 import { Builder, By, until, WebDriver } from 'selenium-webdriver';
 import { faker } from '@faker-js/faker';
+import fs from 'fs';
+import path from 'path';
 
 describe('Signup Page', () => {
   let driver: WebDriver;
@@ -86,5 +88,8 @@ describe('Signup Page', () => {
       }
     }
     
-  }, 60000); // <-- Increased timeout to 60 seconds
+    // Save credentials for reuse in login test
+    const credPath = path.resolve(__dirname, 'signup-cred.json');
+    fs.writeFileSync(credPath, JSON.stringify({ email: testEmail, password: testPassword }, null, 2));
+  }, 60000);
 });
