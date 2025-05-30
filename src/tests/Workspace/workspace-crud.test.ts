@@ -1,20 +1,31 @@
 import { Builder, By, until, WebDriver } from 'selenium-webdriver';
+import { faker } from '@faker-js/faker';
 
 describe('Workspace CRUD', () => {
     let driver: WebDriver;
     let testEmail: string;
     let testPassword: string;
+    let interval: NodeJS.Timeout;
 
     beforeAll(async () => {
         driver = await new Builder().forBrowser('chrome').build();
     });
 
-    //   afterAll(async () => {
-    //     //   await driver.quit();
-    //     }
-    //   });
+    beforeEach(() => {
+        interval = setInterval(() => {}, 1000);
+    });
 
-    it('should log in and create a workspace', async () => {
+    afterEach(() => {
+        clearInterval(interval);
+    });
+
+    // afterAll(async () => {
+    //     await driver.quit();
+    // });
+
+    // Use a dynamic workspace name for create and update tests
+    const workspaceName = faker.company.name();
+    it('should log in to the application', async () => {
 
         await driver.get('https://sass-starter-kit.wordpress-studio.io/login');
         await driver.sleep(3000);
@@ -34,7 +45,7 @@ describe('Workspace CRUD', () => {
         await driver.findElement(By.xpath('//*[@id="root"]/div[2]/div[2]/div/nav/div[1]/div/div/div/div/nav/a[3]')).click();
         await driver.sleep(3000);
         await driver.findElement(By.css("div.flex.items-center.justify-between > button > span > span")).click();
-        await driver.findElement(By.css('[data-testid="name"]')).sendKeys('test');
+        await driver.findElement(By.css('[data-testid="name"]')).sendKeys(workspaceName);
         const createButton = By.xpath("//span[contains(@class, 'm_811560b9') and contains(@class, 'mantine-Button-label') and text()='Create']");
         await driver.wait(until.elementLocated(createButton), 10000).click();
         await driver.sleep(1000);
@@ -48,17 +59,16 @@ describe('Workspace CRUD', () => {
 
         // Assert that the new workspace is visible in the list
         const searchInput = await driver.findElement(By.css('[data-testid="search-role"]'));
-        await searchInput.sendKeys('test');
+        await searchInput.sendKeys(workspaceName);
         await driver.sleep(2000);
         const searchResult = await driver.findElement(By.css('div > div.MuiDataGrid-row.MuiDataGrid-row--firstVisible > div:nth-child(2)'));
         const searchResultText = await searchResult.getText();
         console.log('Search result text:', searchResultText);
-        expect(searchResultText.toLowerCase()).toContain('test');
+        expect(searchResultText.toLowerCase()).toContain(workspaceName.toLowerCase());
     }, 30000);
 
     it('should update the workspace', async () => {
-        const workspaceName = 'test';
-        const updatedWorkspaceName = 'updated-test';
+        const updatedWorkspaceName = faker.company.name();
         await driver.sleep(3000);
 
         // Search for the workspace
@@ -77,17 +87,30 @@ describe('Workspace CRUD', () => {
             await exposeButtons[0].click();
         }
         await driver.findElement(By.css('[data-testid="edit"]')).click();
-        await driver.findElement(By.css('[data-testid="name"]')).clear();
-        await driver.findElement(By.css('[data-testid="name"]')).sendKeys(updatedWorkspaceName);
+        await driver.sleep(2000);
+
+        // Wait for the name input to be present before interacting
+        await driver.wait(
+            until.elementLocated(By.css('[data-testid="name"]')),
+            10000
+        );
+        const nameInput = await driver.findElement(By.css('[data-testid="name"]'));
+        await nameInput.click();
+        await nameInput.clear();
+        await driver.sleep(2000);
+        await nameInput.sendKeys(updatedWorkspaceName);
         await driver.sleep(2000);
         await driver.findElement(By.css('[type="submit"]')).click();
-
+        await searchInput.clear();
         await driver.wait(until.elementLocated(By.css('[id="Workspace updated successfully"]')), 10000);
         const successMsg = await driver.findElement(By.css('[id="Workspace updated successfully"]'));
         const msgText = await successMsg.getText();
-        expect(msgText.toLowerCase()).toContain('Workspace updated successfully');
+        console.log('Workspace update message:', msgText);
+        expect(msgText.includes('Workspace updated successfully')
+        ).toBe(true);
+        await driver.sleep(2000);
         await driver.findElement(By.css('[data-testid="name"]')).clear();
-    });
+    }, 30000);
     
     // it('should delete the workspace', async () => {
 
