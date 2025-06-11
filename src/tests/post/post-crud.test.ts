@@ -4,6 +4,7 @@ import { faker } from '@faker-js/faker';
 describe('Post CRUD', () => {
     let driver: WebDriver;
     let interval: NodeJS.Timeout;
+    let postTitle: string; // Store the generated post title
 
     beforeAll(async () => {
         driver = await new Builder().forBrowser('chrome').build();
@@ -14,12 +15,10 @@ describe('Post CRUD', () => {
     });
 
     afterEach(() => {
-        clearInterval(interval);
+        if (interval) {
+            clearInterval(interval);
+        }
     });
-
-    // afterAll(async () => {
-    //     await driver.quit();
-    // });
 
     it('should log in to the application', async () => {
 
@@ -43,13 +42,62 @@ describe('Post CRUD', () => {
         await driver.findElement(By.css('[data-testid="Create Post"]')).click();
 
         // Text assertion for "Create Post" heading
-        const heading = await driver.findElement(By.css('#root > div.App > div:nth-child(5) > div > main > div > h3'));
+        const heading = await driver.findElement(By.css('div main div h3'));
         const headingText = await heading.getText();
         expect(headingText).toContain('Add Post');
+        await driver.sleep(3000);
+        postTitle = faker.lorem.word(); // Generate and store the post title
+        await driver.findElement(By.css('[name="title"]')).sendKeys(postTitle);
+        await driver.sleep(3000);
+        const richTextArea = await driver.findElement(By.css('[title="Rich Text Area"]'));
+        await richTextArea.click();
+        await richTextArea.sendKeys(faker.lorem.paragraph());
+        await driver.sleep(3000);
+        const submitButtons = await driver.findElements(By.css('[type="submit"]'));
+        await submitButtons[submitButtons.length - 1].click();
+        await driver.sleep(4000);
+    }, 50000); // <-- Set timeout to 30 seconds
 
-        await driver.findElement(By.css('[name="title"]')).click();
-        await driver.findElement(By.css('[name="title"]')).sendKeys(faker.lorem.word());
-    }, 30000); // <-- Set timeout to 30 seconds
+    it('should check created post', async () => {
+        await driver.get('https://sass-starter-kit.wordpress-studio.io/dashboard/post-management/list');
+        await driver.sleep(3000);
+        // Assertion for created post from the post list
+        await driver.wait(
+            until.elementLocated(By.css(`[title="${postTitle}"]`)),
+            10000
+        );
+        const createdPost = await driver.findElement(By.css(`[title="${postTitle}"]`));
+        expect(await createdPost.isDisplayed()).toBe(true);
+    }, 50000);
+
+    it('Search and edit the created post', async () => {
+        const searchInput = await driver.findElement(By.css('[data-testid="search-role"]'));
+        await searchInput.clear();
+        await searchInput.sendKeys(postTitle);
+        await driver.sleep(2000);
+        const expandButtons = await driver.findElements(By.css('[aria-expanded="false"]'));
+        const lastButton = expandButtons[expandButtons.length - 1];
+        await driver.wait(until.elementIsVisible(lastButton), 5000);
+        await lastButton.click();
+        await driver.findElement(By.css('button:nth-child(3) div div')).click();
+        await driver.sleep(3000);
+        await driver.findElement(By.css('[name="title"]')).clear();
+        const updatedPostTitle = faker.lorem.word();
+        await driver.findElement(By.css('[name="title"]')).sendKeys(updatedPostTitle);
+        await driver.sleep(3000);
+        const submitButtons = await driver.findElements(By.css('[type="submit"]'));
+        await submitButtons[submitButtons.length - 1].click();
+        await driver.sleep(5000);
+        // await searchInput.clear();
+        //page reload
+        await driver.navigate().refresh();
+        await driver.sleep(3000);
+    }, 30000);
+
+    // only delete the edited post
+    it('should delete the post', async () => {
+
+    });
 
 });
 
