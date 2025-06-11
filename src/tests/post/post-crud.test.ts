@@ -5,6 +5,7 @@ describe('Post CRUD', () => {
     let driver: WebDriver;
     let interval: NodeJS.Timeout;
     let postTitle: string; // Store the generated post title
+    const updatedPostTitle = faker.lorem.word();
 
     beforeAll(async () => {
         driver = await new Builder().forBrowser('chrome').build();
@@ -82,7 +83,7 @@ describe('Post CRUD', () => {
         await driver.findElement(By.css('button:nth-child(3) div div')).click();
         await driver.sleep(3000);
         await driver.findElement(By.css('[name="title"]')).clear();
-        const updatedPostTitle = faker.lorem.word();
+        // const updatedPostTitle = faker.lorem.word();
         await driver.findElement(By.css('[name="title"]')).sendKeys(updatedPostTitle);
         await driver.sleep(3000);
         const submitButtons = await driver.findElements(By.css('[type="submit"]'));
@@ -92,12 +93,20 @@ describe('Post CRUD', () => {
         //page reload
         await driver.navigate().refresh();
         await driver.sleep(3000);
-    }, 30000);
+    }, 50000);
 
-    // only delete the edited post
-    it('should delete the post', async () => {
-
-    });
+    it('should delete the last edited post', async () => {
+        const searchInput = await driver.findElement(By.css('[data-testid="search-role"]'));
+        await searchInput.clear();
+        await searchInput.sendKeys(updatedPostTitle);
+        await driver.sleep(4000);
+        const expandButtons = await driver.findElements(By.css('[aria-expanded="false"]'));
+        const lastButton = expandButtons[expandButtons.length - 1];
+        await driver.wait(until.elementIsVisible(lastButton), 5000);
+        await lastButton.click();
+        await driver.findElement(By.css('button:nth-child(4) div div')).click();
+        await driver.sleep(3000);
+    }, 50000);
 
 });
 
