@@ -15,7 +15,7 @@
     "typescript": "^5.8.3"
   },
   "scripts": {
-    "test": "jest",
+    "test": "jest --detectOpenHandles --forceExit",
     "build": "tsc",
     "test:ci": "xvfb-run --auto-servernum npm test"
   }
